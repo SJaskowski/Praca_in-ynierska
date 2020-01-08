@@ -1,0 +1,15 @@
+from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.views.generic.base import TemplateView
+from .views import OknoGlowne,DetaleProduktu,dodaj_do_koszyka,usun_z_koszyka,stworz_uzytkownika
+app_name = "Witryna"
+urlpatterns = [
+    path('home/',OknoGlowne.as_view()),
+    path('produkt/<pk>',DetaleProduktu.as_view(),name='produkt'),
+    path('dodaj_do_koszyka/<pk>',dodaj_do_koszyka,name='dodaj_do_koszyka'),
+    path('usun_z_koszyka/<pk>',usun_z_koszyka,name='usun_z_koszyka'),
+    path('stworz_uzytkownika/',stworz_uzytkownika,name='stworz_uzytkownika'),
+
+
+
+]

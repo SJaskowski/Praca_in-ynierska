@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class OknoGlowne(ListView):
     model = Produkt
-    paginate_by = 1
+    paginate_by = 5
     template_name = "Strona_glowna.html"
 
 class DetaleProduktu(DetailView):
@@ -32,7 +32,7 @@ def dodaj_do_koszyka(request, pk):
                 zamowiony_przedmiot.ilosc += 1
                 zamowiony_przedmiot.save()
                 messages.info(request, "dodano przedmiot do koszyka")
-                return redirect("Witryna:produkt", pk)
+                return redirect("Witryna:podsumowanie_zamowienia")
             else:
                 zamowienia.przedmioty.add(zamowiony_przedmiot)
                 messages.info(request, "dodano przedmiot do koszyka")
@@ -53,24 +53,24 @@ def usun_z_koszyka(request,pk):
     if zamowienie_zbior.exists():
         zamowienia = zamowienie_zbior[0]
         if zamowienia.przedmioty.filter(przedmiot__id=produkt.id).exists():
-            zamowiony_przedmiot=ZamowionyPrzedmiot.filter.get_or_create(przedmiot=produkt,
+            zamowiony_przedmiot=ZamowionyPrzedmiot.objects.filter(przedmiot=produkt,
                                                     uzytkownik=request.user,
                                                     zamowiono=False)[0]
             zamowienia.przedmioty.remove(zamowiony_przedmiot)
         else:
-            return redirect("Witryna:produkt", pk)
+            return redirect("Witryna:podsumowanie_zamowienia")
 
     else:
 
-        return redirect("Witryna:produkt", pk)
+        return redirect("Witryna:podsumowanie_zamowienia")
 
-    return redirect("Witryna:produkt", pk)
+    return redirect("Witryna:podsumowanie_zamowienia")
 
 
 class PodsumowanieZamowienia(LoginRequiredMixin,View):
     def get(self,*args,**kwargs):
         try:
-            zamowienia = Zamowienie.objects.filter(uzytkownik=self.request.user,
+            zamowienia = Zamowienie.objects.get(uzytkownik=self.request.user,
                                                    zamowiono=False)
             contex={
             'object': zamowienia
@@ -82,5 +82,31 @@ class PodsumowanieZamowienia(LoginRequiredMixin,View):
             return redirect("/")
 
 
+class DokonaniePlatnosci(View):
+    def get(self,*args,**kwargs):
+        return render(self.request, "kasa.html")
 
 
+
+@login_required()
+def usun_pojedynczy_przedmiot_z_koszyka(request, pk):
+    produkt = get_object_or_404(Produkt, id=pk)
+    zamowienie_zbior = Zamowienie.objects.filter(uzytkownik=request.user,
+                                                 zamowiono=False)
+    if zamowienie_zbior.exists():
+        zamowienia = zamowienie_zbior[0]
+        if zamowienia.przedmioty.filter(przedmiot__id=produkt.id).exists():
+            zamowiony_przedmiot=ZamowionyPrzedmiot.objects.filter(przedmiot=produkt,
+                                                    uzytkownik=request.user,
+                                                    zamowiono=False)[0]
+
+            zamowiony_przedmiot.ilosc -= 1
+            zamowiony_przedmiot.save()
+        else:
+            return redirect("Witryna:podsumowanie_zamowienia")
+
+    else:
+
+        return redirect("Witryna:podsumowanie_zamowienia")
+
+    return redirect("Witryna:podsumowanie_zamowienia")

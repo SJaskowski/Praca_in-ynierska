@@ -27,8 +27,8 @@ class Produkt(models.Model):
     spefycfikacja = models.CharField(max_length=1000, blank=True)
     zdjecie = models.ImageField(blank=True)
     ilosc = models.IntegerField()
-    cena =models.DecimalField(max_digits=10,decimal_places=3)
-    promocyjnacena = models.DecimalField(max_digits=10, decimal_places=3,blank=True,null=True)
+    cena =models.DecimalField(max_digits=10,decimal_places=2)
+    promocyjnacena = models.DecimalField(max_digits=10, decimal_places=2,blank=True,null=True)
     kategorie= models.CharField(choices=Kategorie,max_length=2)
     etykieta= models.CharField(choices=Etykiety,max_length=2)
 
@@ -50,7 +50,6 @@ class Produkt(models.Model):
         })
 
 
-
 class Uzytkownik(AbstractUser):
   data_urodzenia = models.DateField(null=True, blank=True)
 
@@ -63,9 +62,19 @@ class ZamowionyPrzedmiot(models.Model):
     ilosc=models.IntegerField(default=1)
     zamowiono=models.BooleanField(default=False)
 
+    def cena_calkowita_produktow(self):
+        if self.przedmiot.promocyjnacena:
+         return self.ilosc * self.przedmiot.promocyjnacena
+        else:
+         return self.ilosc * self.przedmiot.cena
     def __str__(self):
         return (self.ilosc.__str__()+" of "+self.przedmiot.nazwa)
 
+    def oszczedzonakwota(self):
+        if self.przedmiot.promocyjnacena:
+            return (self.przedmiot.cena*self.ilosc)-(self.przedmiot.promocyjnacena*self.ilosc)
+        else:
+            return 0;
 
 
 class Zamowienie(models.Model):
@@ -73,5 +82,12 @@ class Zamowienie(models.Model):
     przedmioty = models.ManyToManyField(ZamowionyPrzedmiot)
     data_zamowienia=models.DateTimeField()
     zamowiono = models.BooleanField(default=False)
+
+    def cena_koncowa_zamowienia(self):
+        suma=0
+        for zamowienie in self.przedmioty.all():
+            suma +=zamowienie.cena_calkowita_produktow()
+
+        return suma
 
 

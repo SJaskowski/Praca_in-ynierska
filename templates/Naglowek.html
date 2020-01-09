@@ -30,7 +30,7 @@
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item">
-            <a class="nav-link waves-effect" >
+            <a href ="{% url 'Witryna:podsumowanie_zamowienia' %}"class="nav-link waves-effect" >
               <span class="badge red z-depth-1 mr-1"> {{request.user|koszyk_zlicz_przedmioty}}</span>
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>

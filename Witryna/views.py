@@ -4,17 +4,8 @@ from .models import Produkt,ZamowionyPrzedmiot,Zamowienie
 from django.views.generic import ListView,DetailView
 from django.utils import timezone
 from django.contrib import messages
-from .forms import StworzUzytkownika
 from django.contrib.auth import authenticate,login,logout
 
-def stworz_uzytkownika(request):
-    form = StworzUzytkownika(request.POST or None)
-    contex = {
-        'formularz':form
-    }
-    if form.is_valid():
-        form.save()
-    return render(request, "registration/../templates/Zarejestruj.html", contex)
 
 
 class OknoGlowne(ListView):

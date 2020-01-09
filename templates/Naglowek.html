@@ -36,6 +36,24 @@
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
             </a>
           </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+            <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
+                Wyloguj
+            </a>
+          </li>
+                {% else %}
+                     <li class="nav-item">
+                         <a class="nav-link waves-effect" href="{% url 'account_login' %}">
+                            Zaloguj
+                         </a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link waves-effect" href="{% url 'account_signup' %}">
+                            Zarejestruj
+                         </a>
+                      </li>
+            {% endif %}
         </ul>
 
       </div>

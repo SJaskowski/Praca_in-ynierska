@@ -1,4 +1,4 @@
-
+{% load koszyk_template_tags %}
 {% block naglowek %}
 !-- Navbar -->
   <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
@@ -30,8 +30,8 @@
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item">
-            <a class="nav-link waves-effect">
-              <span class="badge red z-depth-1 mr-1"> 1 </span>
+            <a class="nav-link waves-effect" >
+              <span class="badge red z-depth-1 mr-1"> {{request.user|koszyk_zlicz_przedmioty}}</span>
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
             </a>

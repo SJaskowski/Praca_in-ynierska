@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+  <!--Main layout-->
+  <main>
+
+    <div class="container">
+
+<div class="table-responsive">
+  <table class="table">
+      <h2>
+      Podsmowanie Zamówienia
+      </h2>
+    <thead>
+      <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nazwa Produktu</th>
+          <th scope="col">Cena</th>
+          <th scope="col">Ilosc</th>
+          <th scope="col">Cena całkowita</th>
+
+      </tr>
+    </thead>
+    <tbody>
+    {% for zamowiony_przedmiot in object.przedmioty.przedmiot.all %}
+      <tr>
+        <th scope="row">1</th>
+        <td>{{zamowiony_przedmiot.przedmiot.nazwa}}</td>
+        <td>{{zamowiony_przedmiot.przedmioty.przedmiot.cena}}</td>
+        <td>{{zamowiony_przedmiot.ilosc}}</td>
+        <td>Cell</td>
+        <td>Cell</td>
+        <td>Cell</td>
+        <td>Cell</td>
+        <td>Cell</td>
+        <td>Cell</td>
+      </tr>
+    {% endfor %}
+    {% if object.exist %}
+    
+    {% endif %}
+    </tbody>
+  </table>
+</div>
+
+    </div>
+  </main>
+{% endblock %}

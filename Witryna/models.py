@@ -74,3 +74,4 @@ class Zamowienie(models.Model):
     data_zamowienia=models.DateTimeField()
     zamowiono = models.BooleanField(default=False)
 
+

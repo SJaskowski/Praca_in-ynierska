@@ -1,21 +1,24 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse
 from .models import Produkt,ZamowionyPrzedmiot,Zamowienie
-from django.views.generic import ListView,DetailView
+from django.views.generic import ListView,DetailView,View
 from django.utils import timezone
 from django.contrib import messages
-from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import  LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
 class OknoGlowne(ListView):
     model = Produkt
+    paginate_by = 1
     template_name = "Strona_glowna.html"
 
 class DetaleProduktu(DetailView):
         model = Produkt
         template_name = "Produkt_detale.html"
-
+@login_required()
 def dodaj_do_koszyka(request, pk):
     produkt = get_object_or_404(Produkt,id=pk)
     zamowiony_przedmiot, created=ZamowionyPrzedmiot.objects.get_or_create(przedmiot=produkt,
@@ -42,7 +45,7 @@ def dodaj_do_koszyka(request, pk):
         return redirect("Witryna:produkt", pk)
 
 
-
+@login_required()
 def usun_z_koszyka(request,pk):
     produkt = get_object_or_404(Produkt, id=pk)
     zamowienie_zbior = Zamowienie.objects.filter(uzytkownik=request.user,
@@ -62,3 +65,22 @@ def usun_z_koszyka(request,pk):
         return redirect("Witryna:produkt", pk)
 
     return redirect("Witryna:produkt", pk)
+
+
+class PodsumowanieZamowienia(LoginRequiredMixin,View):
+    def get(self,*args,**kwargs):
+        try:
+            zamowienia = Zamowienie.objects.filter(uzytkownik=self.request.user,
+                                                   zamowiono=False)
+            contex={
+            'object': zamowienia
+
+            }
+            return render(self.request, "podsumowanie_zamowienia.html", contex)
+        except ObjectDoesNotExist:
+            messages.error(self.request,"Koszyk jest pusty")
+            return redirect("/")
+
+
+
+

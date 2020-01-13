@@ -64,6 +64,7 @@ class Adres(models.Model):
     kraj=models.CharField(max_length=100)
     kod_pocztowy=models.CharField(max_length=6)
     miasto=models.CharField(max_length=100)
+    zapamietano=models.BooleanField(default=False)
 
     def __str__(self):
         return self.uzytkownik
@@ -92,11 +93,13 @@ class ZamowionyPrzedmiot(models.Model):
 
 class Zamowienie(models.Model):
     uzytkownik = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    data_zamowienia = models.DateTimeField()
+
     przedmioty = models.ManyToManyField(ZamowionyPrzedmiot)
-    data_zamowienia=models.DateTimeField()
+
     zamowiono = models.BooleanField(default=False)
     adres=models.ForeignKey('Adres',on_delete=models.SET_NULL,blank=True,null=True)
-
+    id_zamowienia = uzytkownik.__str__() + str(data_zamowienia)
     def cena_koncowa_zamowienia(self):
         suma=0
         for zamowienie in self.przedmioty.all():
@@ -104,4 +107,5 @@ class Zamowienie(models.Model):
 
         return suma
 
-
+    def get_id(self):
+        return self.id_zamowienia

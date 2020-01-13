@@ -44,6 +44,7 @@ class Produkt(models.Model):
                 'pk': self.id
             })
 
+
     def get_usun_z_koszykaa_url(self):
         return reverse("Witryna:usun_z_koszyka", kwargs={
             'pk': self.id
@@ -66,8 +67,6 @@ class Adres(models.Model):
     miasto=models.CharField(max_length=100)
     zapamietano=models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.uzytkownik
 
 
 class ZamowionyPrzedmiot(models.Model):
@@ -109,3 +108,6 @@ class Zamowienie(models.Model):
 
     def get_id(self):
         return self.id_zamowienia
+
+    def aktualizuj_status_zamowienia(self):
+        self.zamowiono=True

@@ -53,7 +53,7 @@
               <a href="{{ object.get_dodaj_do_koszyka_url }}" class="btn btn-primary btn-md my-0 p" i="fas fa-shopping-cart ml-1">Dodaj do Koszyka <i class="fas fa-shopping-cart ml-1"></i></a>
 
               {% else %}
-                   <a href="{{ object.get_dodaj_do_koszyka_url }}" class="btn btn-primary btn-md my-0 p" disabled="true">Dodaj do Koszyka <i class="fas fa-shopping-cart ml-1"></i></a>
+                   <a href="{{ object.get_dodaj_do_koszyka_url }}" class="btn btn-danger btn-md my-0 p" disabled="true">Produkt Niedostępny  <i class="fas fa-times"></i></a>
 
               {% endif %}
 

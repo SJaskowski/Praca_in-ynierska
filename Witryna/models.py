@@ -56,6 +56,19 @@ class Uzytkownik(AbstractUser):
   def __str__(self):
       return self.username
 
+
+class Adres(models.Model):
+    uzytkownik=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    nazwa_ulicy=models.CharField(max_length=100)
+    nr_domu=models.CharField(max_length=100)
+    kraj=models.CharField(max_length=100)
+    kod_pocztowy=models.CharField(max_length=6)
+    miasto=models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.uzytkownik
+
+
 class ZamowionyPrzedmiot(models.Model):
     uzytkownik=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     przedmiot=models.ForeignKey(Produkt,on_delete=models.CASCADE)
@@ -82,6 +95,7 @@ class Zamowienie(models.Model):
     przedmioty = models.ManyToManyField(ZamowionyPrzedmiot)
     data_zamowienia=models.DateTimeField()
     zamowiono = models.BooleanField(default=False)
+    adres=models.ForeignKey('Adres',on_delete=models.SET_NULL,blank=True,null=True)
 
     def cena_koncowa_zamowienia(self):
         suma=0

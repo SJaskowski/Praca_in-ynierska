@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from .forms import FormularzDanychAdresowych
 
 
 
@@ -56,7 +57,11 @@ def usun_z_koszyka(request,pk):
             zamowiony_przedmiot=ZamowionyPrzedmiot.objects.filter(przedmiot=produkt,
                                                     uzytkownik=request.user,
                                                     zamowiono=False)[0]
+            zamowiony_przedmiot.ilosc = 1
+            zamowiony_przedmiot.save()
             zamowienia.przedmioty.remove(zamowiony_przedmiot)
+
+
         else:
             return redirect("Witryna:podsumowanie_zamowienia")
 
@@ -83,10 +88,20 @@ class PodsumowanieZamowienia(LoginRequiredMixin,View):
 
 
 class DokonaniePlatnosci(View):
+
     def get(self,*args,**kwargs):
-        return render(self.request, "kasa.html")
+        formularz=FormularzDanychAdresowych()
+        contex = {
+            'formularz': formularz
 
+        }
+        return render(self.request, "kasa.html",contex)
 
+    def post(self,*args,**kwargs):
+        formularz = FormularzDanychAdresowych(self.request.POST or None)
+        if formularz.is_valid():
+            print ("Formularz poprawnie uzupełniony")
+            return redirect('Witryna:dokonaj_platnosci')
 
 @login_required()
 def usun_pojedynczy_przedmiot_z_koszyka(request, pk):
@@ -95,13 +110,14 @@ def usun_pojedynczy_przedmiot_z_koszyka(request, pk):
                                                  zamowiono=False)
     if zamowienie_zbior.exists():
         zamowienia = zamowienie_zbior[0]
-        if zamowienia.przedmioty.filter(przedmiot__id=produkt.id).exists():
+        if zamowienia.przedmioty.filter(przedmiot__id=produkt.id).exists() :
             zamowiony_przedmiot=ZamowionyPrzedmiot.objects.filter(przedmiot=produkt,
                                                     uzytkownik=request.user,
                                                     zamowiono=False)[0]
+            if zamowiony_przedmiot.ilosc>1:
+                zamowiony_przedmiot.ilosc -= 1
+                zamowiony_przedmiot.save()
 
-            zamowiony_przedmiot.ilosc -= 1
-            zamowiony_przedmiot.save()
         else:
             return redirect("Witryna:podsumowanie_zamowienia")
 
@@ -110,3 +126,4 @@ def usun_pojedynczy_przedmiot_z_koszyka(request, pk):
         return redirect("Witryna:podsumowanie_zamowienia")
 
     return redirect("Witryna:podsumowanie_zamowienia")
+

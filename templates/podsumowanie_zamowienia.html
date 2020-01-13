@@ -16,8 +16,8 @@
       <tr>
           <th scope="col">#</th>
           <th scope="col">Nazwa Produktu</th>
-          <th scope="col">Cena</th>
           <th scope="col">Ilosc</th>
+          <th scope="col">Cena</th>
           <th scope="col">oszczędzasz</th>
           <th scope="col">Cena całkowita</th>
 
@@ -28,18 +28,20 @@
       <tr>
         <th scope="row">{{forloop.counter}}</th>
         <td>{{zamowiony_przedmiot.przedmiot.nazwa}}</td>
+       <td>
+            <a href="{% url 'Witryna:usun_pojedynczy_przedmiot_z_koszyka' zamowiony_przedmiot.przedmiot.id %}"><i class="fas fa-minus mr-2"></i></a>
+                {{zamowiony_przedmiot.ilosc}}
+            <a href="{% url 'Witryna:dodaj_do_koszyka' zamowiony_przedmiot.przedmiot.id %}"> <i class="fas fa-plus ml-2"></i> </a>
+        </td>
+
         {% if zamowiony_przedmiot.przedmiot.promocyjnacena %}
 
             <td><del>{{zamowiony_przedmiot.przedmiot.cena}} zł  </del>{{zamowiony_przedmiot.przedmiot.promocyjnacena}} zł</td>
         {% else %}
              <td>  {{zamowiony_przedmiot.przedmiot.cena}} zł</td>
         {% endif %}
-        <td>
-            <a href="{% url 'Witryna:usun_pojedynczy_przedmiot_z_koszyka' zamowiony_przedmiot.przedmiot.id %}"><i class="fas fa-minus mr-2"></i></a>
-                {{zamowiony_przedmiot.ilosc}}
-            <a href="{% url 'Witryna:dodaj_do_koszyka' zamowiony_przedmiot.przedmiot.id %}"> <i class="fas fa-plus ml-2"></i> </a>
-        </td>
         <td>{{zamowiony_przedmiot.oszczedzonakwota}} zł</td>
+
         <td>{{zamowiony_przedmiot.cena_calkowita_produktow}} zł</td>
 
          <td>  <a href="{% url 'Witryna:usun_z_koszyka' zamowiony_przedmiot.przedmiot.id %}"><i class="fas fa-trash-alt"></i></a></td>

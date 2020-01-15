@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse
 from django.urls import reverse
-from .models import Produkt,ZamowionyPrzedmiot,Zamowienie,Adres
+from .models import Produkt,ZamowionyPrzedmiot,Zamowienie,Adres,Kategoria
 from django.views.generic import ListView,DetailView,View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
@@ -15,14 +15,36 @@ from django.conf import settings
 
 
 
+
+
 class OknoGlowne(ListView):
     model = Produkt
     paginate_by = 5
     template_name = "Strona_glowna.html"
+    categoria = "ALL"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['kategoria'] = Kategoria.objects.all(**kwargs)
+        return context
+
+    def get_queryset(self, **kwargs):
+        qs = super().get_queryset()
+        if self.categoria == "ALL":
+            return qs.all()
+        else:
+            return Produkt.objects.filter(kategoria=self.categoria)
+
+def zmien_kategorie(request,kategoria):
+    categoria=get_object_or_404(Kategoria,nazwa=kategoria)
+    OknoGlowne.categoria=categoria
+    return redirect("Witryna:Main")
 
 class DetaleProduktu(DetailView):
         model = Produkt
         template_name = "Produkt_detale.html"
+
+
+
 @login_required()
 def dodaj_do_koszyka(request, pk):
     produkt = get_object_or_404(Produkt,id=pk)
@@ -223,3 +245,5 @@ def aktualizuj_status(request):
         zamowiioneprzedmioty.aktualizuj_status_zamowienia()
     except:
         messages.error(request, "Coś w chuj źle")
+
+

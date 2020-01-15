@@ -4,7 +4,7 @@ from django.views.generic.base import TemplateView
 from .views import OknoGlowne,DetaleProduktu,dodaj_do_koszyka,\
     usun_z_koszyka,PodsumowanieZamowienia,SzczegolyDostawy,\
     usun_pojedynczy_przedmiot_z_koszyka,DokojnajPlatnosci,paypall_sukces,paypall_powrot,\
-    oproznij_koszyk
+    oproznij_koszyk,zmien_kategorie
 
 app_name = "Witryna"
 urlpatterns = [
@@ -19,6 +19,7 @@ urlpatterns = [
     path('oproznij_koszyk/', oproznij_koszyk, name='oproznij_koszyk'),
     path('zaplac/paypal/powrot', paypall_powrot, name='paypall_powrot'),
     path('zaplac/paypal/sukces', paypall_sukces, name='paypall_sukces'),
+    path('zmien_kategorie/<str:kategoria>', zmien_kategorie, name='zmien_kategorie'),
 
 
 

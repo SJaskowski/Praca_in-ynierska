@@ -8,19 +8,16 @@ from string import __all__
 # Create your models here.
 
 
-Kategorie = (
-    ('S','Shirt'),
-    ('SW', 'Sport-Wear'),
-    ('OW', 'Out-Wear')
 
+class Kategoria(models.Model):
+    nazwa=models.CharField(max_length=100)
+    id=models.CharField(max_length=3,primary_key=True)
 
-)
-Etykiety = (
-    ('P','primary'),
-    ('S', 'secondary'),
-    ('D', 'danger')
+    def zmien_kategorie_url(self):
+            return reverse("Witryna:zmien_kategorie", kwargs={
+                'kategoria': self.nazwa
+            })
 
-)
 class Produkt(models.Model):
     nazwa = models.CharField(max_length=100)
     id    = models.CharField(max_length=10,primary_key=True,)
@@ -30,8 +27,8 @@ class Produkt(models.Model):
     ilosc = models.IntegerField()
     cena =models.DecimalField(max_digits=10,decimal_places=2)
     promocyjnacena = models.DecimalField(max_digits=10, decimal_places=2,blank=True,null=True)
-    kategorie= models.CharField(choices=Kategorie,max_length=2)
-    etykieta= models.CharField(choices=Etykiety,max_length=2)
+    kategoria= models.ForeignKey(Kategoria,on_delete=models.CASCADE)
+
 
     def __str__(self):
         return self.nazwa

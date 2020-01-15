@@ -196,15 +196,18 @@ def DokojnajPlatnosci(request):
 
 @login_required()
 def oproznij_koszyk(request):
-        zamowienie_zbior = Zamowienie.objects.filter(uzytkownik=request.user, zamowiono=False).delete()
-        zamowiony_przedmiot = ZamowionyPrzedmiot.objects.filter(uzytkownik=request.user, zamowiono=False).delete()
+        if Zamowienie.objects.filter(uzytkownik=request.user, zamowiono=False).delete():
+            pass
+        if ZamowionyPrzedmiot.objects.filter(uzytkownik=request.user, zamowiono=False).delete():
+            pass
         return redirect("Witryna:podsumowanie_zamowienia")
+
 
 @csrf_exempt
 @login_required()
 def paypall_sukces(request):
     aktualizuj_status(request)
-    # oproznij_koszyk(request)
+    oproznij_koszyk(request)
     return render(request,"PayPalSukces.html")
 @csrf_exempt
 @login_required()
@@ -213,7 +216,10 @@ def paypall_powrot(request):
 
 @login_required()
 def aktualizuj_status(request):
-    zamowienia = Zamowienie.objects.get(uzytkownik=request.user,
-                                        zamowiono=False)
-    zamowienia.aktualizuj_status_zamowienia()
-
+    try:
+        zamowienia = Zamowienie.objects.get(uzytkownik=request.user, zamowiono=False).exist()
+        zamowienia.aktualizuj_status_zamowienia()
+        zamowiioneprzedmioty = ZamowionyPrzedmiot.objects.get(uzytkownik=request.user, zamowiono=False).exist()
+        zamowiioneprzedmioty.aktualizuj_status_zamowienia()
+    except:
+        messages.error(request, "Coś w chuj źle")

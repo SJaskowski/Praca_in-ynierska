@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load imagefit %}
 {% block content %}
 
   <!--Main layout-->
@@ -12,7 +13,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-3 mb-5">
 
         <!-- Navbar brand -->
-        <span class="navbar-brand">Categories:</span>
+        <span class="navbar-brand">Kategorie:</span>
 
         <!-- Collapse button -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
@@ -72,8 +73,7 @@
 
               <!--Card image-->
               <div class="view overlay">
-                <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"
-                  alt="">
+                <img src ="{{ Produkt.zdjecie.url|resize:"thumbnail"}}" class="card-img-top">
                 <a href="{{ Produkt.get_absolute_url }}">
                   <div class="mask rgba-white-slight"></div>
                 </a>
@@ -89,16 +89,16 @@
                 <h5>
                   <strong>
                     <a href="{{ Produkt.get_absolute_url }}" class="dark-grey-text">{{Produkt.nazwa}}
-                      <span class="badge badge-pill {{Produkt_get_etykieta_display}}-color">NEW</span>
+
                     </a>
                   </strong>
                 </h5>
 
                 <h4 class="font-weight-bold blue-text">
                   {% if Produkt.promocyjnacena %}
-                  <strong>{{Produkt.promocyjnacena}}</strong>
+                  <strong>{{Produkt.promocyjnacena}} zł </strong>
                   {% else %}
-                  <strong>{{Produkt.cena}}</strong>
+                  <strong>{{Produkt.cena}} zł</strong>
                   {% endif %}
                 </h4>
 

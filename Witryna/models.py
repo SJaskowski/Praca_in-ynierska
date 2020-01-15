@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.shortcuts import reverse
+from django import forms
 
 from string import __all__
 # Create your models here.
@@ -60,6 +61,8 @@ class Uzytkownik(AbstractUser):
 
 class Adres(models.Model):
     uzytkownik=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    imie=models.CharField(max_length=100)
+    nazwisko=models.CharField(max_length=100)
     nazwa_ulicy=models.CharField(max_length=100)
     nr_domu=models.CharField(max_length=100)
     kraj=models.CharField(max_length=100)
@@ -89,6 +92,10 @@ class ZamowionyPrzedmiot(models.Model):
         else:
             return 0;
 
+    def aktualizuj_status_zamowienia(self):
+        self.zamowiono = True
+        self.save()
+
 
 class Zamowienie(models.Model):
     uzytkownik = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -111,3 +118,4 @@ class Zamowienie(models.Model):
 
     def aktualizuj_status_zamowienia(self):
         self.zamowiono=True
+        self.save()

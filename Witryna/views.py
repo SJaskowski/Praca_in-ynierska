@@ -38,6 +38,10 @@ def zmien_kategorie(request,kategoria):
     categoria=get_object_or_404(Kategoria,nazwa=kategoria)
     OknoGlowne.categoria=categoria
     return redirect("Witryna:Main")
+def podstawowa_kategorie(request,kategoria):
+    categoria=get_object_or_404(Kategoria,nazwa=kategoria)
+    OknoGlowne.categoria=kategoria
+    return redirect("Witryna:Main")
 
 class DetaleProduktu(DetailView):
         model = Produkt

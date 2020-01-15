@@ -17,6 +17,10 @@ class Kategoria(models.Model):
             return reverse("Witryna:zmien_kategorie", kwargs={
                 'kategoria': self.nazwa
             })
+    def podstawowa_kategorie_url(self):
+            return reverse("Witryna:zmien_kategorie", kwargs={
+                'kategoria': "ALL"
+            })
 
 class Produkt(models.Model):
     nazwa = models.CharField(max_length=100)

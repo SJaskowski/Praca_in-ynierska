@@ -37,8 +37,8 @@
 
                   <!--firstName-->
                   <div class="md-form ">
-                    <input type="text" id="firstName" class="form-control">
-                    <label for="firstName" class="">Imie</label>
+                    {{ formularz.imie }}
+
                   </div>
 
                 </div>
@@ -49,8 +49,7 @@
 
                   <!--lastName-->
                   <div class="md-form">
-                    <input type="text" id="lastName" class="form-control">
-                    <label for="lastName" class="">Nazwisko</label>
+                    {{ formularz.nazwisko }}
                   </div>
 
                 </div>
@@ -59,19 +58,21 @@
               </div>
               <!--Grid row-->
 
-
+            <div class="row">
               <!--address-->
-              <div class="md-form mb-5">
+              <div class="md-form mb-5 ml-3">
 {#                <input type="text" id="address" class="form-control" placeholder="1234 Main St">#}
                   {{ formularz.nazwa_ulicy }}
                 <label for="address" class=""></label>
               </div>
 
               <!--address-2-->
-              <div class="md-form mb-5">
+              <div class="md-form mb-5 ml-2">
                 {{ formularz.nr_domu }}
                 <label for="address-2" class=""></label>
               </div>
+
+            </div>
 
               <!--Grid row-->
               <div class="row">

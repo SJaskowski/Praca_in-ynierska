@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .forms import FormularzDanychAdresowych
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
+# from .rekomendacja import Rekomendacja
 
 
 
@@ -21,7 +22,7 @@ class OknoGlowne(ListView):
     model = Produkt
     paginate_by = 5
     template_name = "Strona_glowna.html"
-    categoria = "ALL"
+    categoria = 3
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['kategoria'] = Kategoria.objects.all(**kwargs)
@@ -29,7 +30,7 @@ class OknoGlowne(ListView):
 
     def get_queryset(self, **kwargs):
         qs = super().get_queryset()
-        if self.categoria == "ALL":
+        if self.categoria == 3:
             return qs.all()
         else:
             return Produkt.objects.filter(kategoria=self.categoria)
@@ -38,14 +39,22 @@ def zmien_kategorie(request,kategoria):
     categoria=get_object_or_404(Kategoria,nazwa=kategoria)
     OknoGlowne.categoria=categoria
     return redirect("Witryna:Main")
+
 def podstawowa_kategorie(request,kategoria):
-    categoria=get_object_or_404(Kategoria,nazwa=kategoria)
-    OknoGlowne.categoria=kategoria
+    categoria = get_object_or_404(Kategoria, nazwa=kategoria)
+    OknoGlowne.categoria=categoria
     return redirect("Witryna:Main")
 
 class DetaleProduktu(DetailView):
         model = Produkt
+        # rekomencdacja=Rekomendacja()
+        # rekomendowane_produkty=Rekomendacja.sugeruj_produkty(Rekomendacja,[Produkt],4)
         template_name = "Produkt_detale.html"
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data()
+            # context['rekomendowane_produkty'] = self.rekomendowane_produkty
+            return context
 
 
 
@@ -164,9 +173,13 @@ class SzczegolyDostawy(View):
                     zapamietano=zapamietaj_adres
                 )
                 adres.save()
-                return redirect('Witryna:dokonaj_platnosci')
-            messages.warning(self.request, "Nie poprawnie uzupełniony formluarz")
-            return redirect('Witryna:dokonaj_platnosci')
+
+                return redirect('Witryna:dokonaj_platnosci',rodzaj_platnosci)
+            else:
+
+                messages.warning(self.request,  "FOrma")
+                return render(self.request, "daneAdresowe.html")
+
         except ObjectDoesNotExist:
             messages.error(self.request,"Nie posiadasz Zamowienia")
             return redirect ("Witryna:podsumowanie_zamowienia")
@@ -197,24 +210,31 @@ def usun_pojedynczy_przedmiot_z_koszyka(request, pk):
 
     return redirect("Witryna:podsumowanie_zamowienia")
 
-def DokojnajPlatnosci(request):
+def DokojnajPlatnosci(request,rodzajplatnosci):
         try:
             zamowienia = Zamowienie.objects.get(uzytkownik=request.user,
                                                    zamowiono=False)
-            id_zamowienia=zamowienia.get_id()
-            paypal_dict = {
-                "business": settings.PAYPAL_RECEIVER_EMAIL,
-                "amount": zamowienia.cena_koncowa_zamowienia,
-                "item_name": "Zamówienie nr",
-                "invoice": id_zamowienia,
-                "currency_code":"PLN",
-                "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
-                "return": request.build_absolute_uri(reverse('Witryna:paypall_sukces')),
-                "cancel_return": request.build_absolute_uri(reverse('Witryna:paypall_powrot')),
+            if(rodzajplatnosci=="PP"):
+                id_zamowienia=zamowienia.get_id()
+                paypal_dict = {
+                    "business": settings.PAYPAL_RECEIVER_EMAIL,
+                    "amount": zamowienia.cena_koncowa_zamowienia,
+                    "item_name": "Zamówienie nr",
+                    "invoice": id_zamowienia,
+                    "currency_code":"PLN",
+                    "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+                    "return": request.build_absolute_uri(reverse('Witryna:paypall_sukces')),
+                    "cancel_return": request.build_absolute_uri(reverse('Witryna:paypall_powrot')),
 
-            }
-            formularz=PayPalPaymentsForm(initial=paypal_dict)
-            return render(request,'zaplata.html',{'zamowienie':zamowienia,'formularz':formularz})
+                }
+                formularz=PayPalPaymentsForm(initial=paypal_dict)
+                return render(request,'zaplata.html',{'zamowienie':zamowienia,'formularz':formularz})
+            else:
+                if rodzajplatnosci=="P":
+                 return przelew
+                else:
+                    if rodzajplatnosci=="OD":
+                        return platnosc_przy_odbiorze
         except ObjectDoesNotExist:
             messages.error(request,"Koszyk jest pusty")
             return redirect("/")
@@ -250,4 +270,13 @@ def aktualizuj_status(request):
     except:
         messages.error(request, "Coś w chuj źle")
 
+@login_required()
+def platnosc_przy_odbiorze(request):
+    aktualizuj_status(request)
+    oproznij_koszyk(request)
+    return render(request, "Odbior_osobisty.html")
 
+def przelew(request):
+    aktualizuj_status(request)
+    oproznij_koszyk(request)
+    return render(request, "DaneDoPrzelewu.html")

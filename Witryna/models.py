@@ -18,8 +18,8 @@ class Kategoria(models.Model):
                 'kategoria': self.nazwa
             })
     def podstawowa_kategorie_url(self):
-            return reverse("Witryna:zmien_kategorie", kwargs={
-                'kategoria': "ALL"
+            return reverse("Witryna:podstawowa_kategorie", kwargs={
+                'kategoria': 3
             })
 
 class Produkt(models.Model):

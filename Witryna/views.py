@@ -231,10 +231,12 @@ def DokojnajPlatnosci(request,rodzajplatnosci):
                 return render(request,'zaplata.html',{'zamowienie':zamowienia,'formularz':formularz})
             else:
                 if rodzajplatnosci=="P":
-                 return przelew
+                     przelew
+                     return render(request, 'DaneDoPrzelewu.html')
                 else:
                     if rodzajplatnosci=="OD":
-                        return platnosc_przy_odbiorze
+                        platnosc_przy_odbiorze
+                        return render(request, 'Odbior_osobisty.html')
         except ObjectDoesNotExist:
             messages.error(request,"Koszyk jest pusty")
             return redirect("/")
@@ -263,10 +265,10 @@ def paypall_powrot(request):
 @login_required()
 def aktualizuj_status(request):
     try:
-        zamowienia = Zamowienie.objects.get(uzytkownik=request.user, zamowiono=False).exist()
+        zamowienia = Zamowienie.objects.get(uzytkownik=request.user, zamowiono=False)
         zamowienia.aktualizuj_status_zamowienia()
-        zamowiioneprzedmioty = ZamowionyPrzedmiot.objects.get(uzytkownik=request.user, zamowiono=False).exist()
-        zamowiioneprzedmioty.aktualizuj_status_zamowienia()
+        zamowiony_przedmioty = ZamowionyPrzedmiot.objects.get(uzytkownik=request.user, zamowiono=False)
+        zamowiony_przedmioty.aktualizuj_status_zamowienia()
     except:
         messages.error(request, "Coś w chuj źle")
 
@@ -274,9 +276,9 @@ def aktualizuj_status(request):
 def platnosc_przy_odbiorze(request):
     aktualizuj_status(request)
     oproznij_koszyk(request)
-    return render(request, "Odbior_osobisty.html")
+    return render(request, 'Odbior_osobisty.html')
 
 def przelew(request):
     aktualizuj_status(request)
     oproznij_koszyk(request)
-    return render(request, "DaneDoPrzelewu.html")
+    return render(request, 'DaneDoPrzelewu.html')

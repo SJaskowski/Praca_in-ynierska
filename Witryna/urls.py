@@ -4,7 +4,7 @@ from django.views.generic.base import TemplateView
 from .views import OknoGlowne,DetaleProduktu,dodaj_do_koszyka,\
     usun_z_koszyka,PodsumowanieZamowienia,SzczegolyDostawy,\
     usun_pojedynczy_przedmiot_z_koszyka,DokojnajPlatnosci,paypall_sukces,paypall_powrot,\
-    oproznij_koszyk,zmien_kategorie,podstawowa_kategorie,platnosc_przy_odbiorze,przelew,
+    oproznij_koszyk,zmien_kategorie,podstawowa_kategorie,platnosc_przy_odbiorze,przelew
 
 app_name = "Witryna"
 urlpatterns = [

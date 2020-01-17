@@ -85,7 +85,7 @@ class ZamowionyPrzedmiot(models.Model):
         else:
          return self.ilosc * self.przedmiot.cena
     def __str__(self):
-        return (self.ilosc.__str__()+" of "+self.przedmiot.nazwa)
+        return (self.ilosc.__str__()+" razy "+self.przedmiot.nazwa)
 
     def oszczedzonakwota(self):
         if self.przedmiot.promocyjnacena:

@@ -59,6 +59,11 @@ class Uzytkownik(AbstractUser):
   def __str__(self):
       return self.username
 
+class KontoBankowe(models.Model):
+    nazwao_dbiorcy = models.CharField(max_length=100)
+    nr_rachunku = models.CharField(max_length=100)
+
+
 
 class Adres(models.Model):
     uzytkownik=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
@@ -70,6 +75,7 @@ class Adres(models.Model):
     kod_pocztowy=models.CharField(max_length=6)
     miasto=models.CharField(max_length=100)
     zapamietano=models.BooleanField(default=False)
+
 
 
 
@@ -103,10 +109,11 @@ class Zamowienie(models.Model):
     data_zamowienia = models.DateTimeField()
 
     przedmioty = models.ManyToManyField(ZamowionyPrzedmiot)
-
+    zaplacono=models.BooleanField(default=False)
     zamowiono = models.BooleanField(default=False)
     adres=models.ForeignKey('Adres',on_delete=models.SET_NULL,blank=True,null=True)
-    id_zamowienia = uzytkownik.__str__() + str(data_zamowienia)
+    rodzaj_platnosci=models.CharField(blank=True,null=True,max_length=20)
+    id_zamowienia =models.CharField(max_length=100,default=(uzytkownik.__str__() + str(data_zamowienia)))
     def cena_koncowa_zamowienia(self):
         suma=0
         for zamowienie in self.przedmioty.all():

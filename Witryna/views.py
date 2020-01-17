@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse
 from django.urls import reverse
-from .models import Produkt,ZamowionyPrzedmiot,Zamowienie,Adres,Kategoria
+from .models import Produkt,ZamowionyPrzedmiot,Zamowienie,Adres,Kategoria,KontoBankowe
 from django.views.generic import ListView,DetailView,View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
@@ -32,18 +32,19 @@ class OknoGlowne(ListView):
         return context
 
     def get_queryset(self, **kwargs):
-       if self.filtr_przedmiotow.szukany_przedmiot:
-        qs = super().get_queryset()
-        if self.categoria == 3:
-            return qs.all()
-        else:
-            return Produkt.objects.filter(kategoria=self.categoria)
-       else:
-           qs = super().get_queryset()
-           if self.categoria == 3:
-               return qs.filter(Produkt.nazwa==self.filtr_przedmiotow.szukany_przedmiot)
+           # self.filtr_przedmiotow.szukany_przedmiot=self.request.GET.get('szukany_przedmiot')
+           if self.filtr_przedmiotow.szukany_przedmiot=='':
+            qs = super().get_queryset()
+            if self.categoria == 3:
+                return qs.all()
+            else:
+                return Produkt.objects.filter(kategoria=self.categoria)
            else:
-               return Produkt.objects.filter(kategoria=self.categoria,nazwa=self.filtr_przedmiotow.szukany_przedmiot)
+               qs = super().get_queryset()
+               if self.categoria == 3:
+                   return qs.filter(nazwa=self.filtr_przedmiotow.szukany_przedmiot)
+               else:
+                   return Produkt.objects.filter(kategoria=self.categoria,nazwa=self.filtr_przedmiotow.szukany_przedmiot)
 
 def zmien_kategorie(request,kategoria):
     categoria=get_object_or_404(Kategoria,nazwa=kategoria)
@@ -147,6 +148,15 @@ class PodsumowanieZamowienia(LoginRequiredMixin,View):
             messages.error(self.request,"Koszyk jest pusty")
             return redirect("/")
 
+def formularz_poprawnie_wypelniony(Pola,zapamietaj_adres):
+    valid=True
+    for pole in Pola:
+        if pole=='':
+            valid=False
+    if zapamietaj_adres:
+        vaild=zapamietaj_adres
+    return valid
+
 
 class SzczegolyDostawy(View):
 
@@ -156,6 +166,12 @@ class SzczegolyDostawy(View):
             'formularz': formularz
 
         }
+        zapisane_adresy=Adres.objects.filter(
+            uzytkownik=self.request.user,
+            zapamietano=True
+        )
+        if zapisane_adresy.exists():
+            contex.update({'domyslny_Adres': zapisane_adresy[0]})
         return render(self.request, "daneAdresowe.html",contex)
 
     def post(self,*args,**kwargs):
@@ -166,25 +182,54 @@ class SzczegolyDostawy(View):
                                                   zamowiono=False)
 
             if formularz.is_valid():
-                nazwa_ulicy = formularz.cleaned_data.get('nazwa_ulicy')
-                nr_domu = formularz.cleaned_data.get('nr_domu')
-                kraj = formularz.cleaned_data.get('kraj')
-                kod_pocztowy = formularz.cleaned_data.get('kod_pocztowy')
-                miasto = formularz.cleaned_data.get('miasto')
-                zapamietaj_adres=formularz.cleaned_data.get('zapamietaj_adres')
-                rodzaj_platnosci=formularz.cleaned_data.get('rodzaj_platnosci')
-                adres = Adres(
-                    uzytkownik=self.request.user,
-                    nazwa_ulicy=nazwa_ulicy,
-                    nr_domu=nr_domu,
-                    kraj=kraj,
-                    kod_pocztowy=kod_pocztowy,
-                    miasto=miasto,
-                    zapamietano=zapamietaj_adres
-                )
-                adres.save()
+                uzyj_zapamietanego=formularz.cleaned_data.get('uzyj_zapamietanego')
+                if uzyj_zapamietanego:
+                    zapisane_adresy = Adres.objects.filter(
+                        uzytkownik=self.request.user,
+                        zapamietano=True
+                    )
+                    if zapisane_adresy.exists():
+                        adres=zapisane_adresy[0]
+                        rodzaj_platnosci = formularz.cleaned_data.get('rodzaj_platnosci')
+                        zamowienia.adres = adres
+                        zamowienia.rodzaj_platnosci=rodzaj_platnosci
+                        zamowienia.save()
+                        return redirect('Witryna:dokonaj_platnosci', rodzaj_platnosci)
+                    else:
+                        messages.info(self.request,"Brak domyślnego Adresu")
+                        return render(self.request, "daneAdresowe.html")
+                else:
+                    nazwa_ulicy = formularz.cleaned_data.get('nazwa_ulicy')
+                    nr_domu = formularz.cleaned_data.get('nr_domu')
+                    kraj = formularz.cleaned_data.get('kraj')
+                    kod_pocztowy = formularz.cleaned_data.get('kod_pocztowy')
+                    miasto = formularz.cleaned_data.get('miasto')
+                    zapamietaj_adres = formularz.cleaned_data.get('zapamietaj_adres')
+                    rodzaj_platnosci = formularz.cleaned_data.get('rodzaj_platnosci')
+                    if formularz_poprawnie_wypelniony([nazwa_ulicy,nr_domu,kraj,kod_pocztowy,miasto,],uzyj_zapamietanego):
+                        zapisane_adresy = Adres.objects.filter(
+                            uzytkownik=self.request.user,
+                            zapamietano=True
+                        )
+                        if zapisane_adresy.exists():
+                           zapisane_adresy.delete()
 
-                return redirect('Witryna:dokonaj_platnosci',rodzaj_platnosci)
+                        adres = Adres(
+                            uzytkownik=self.request.user,
+                            nazwa_ulicy=nazwa_ulicy,
+                            nr_domu=nr_domu,
+                             kraj=kraj,
+                             kod_pocztowy=kod_pocztowy,
+                             miasto=miasto,
+                            zapamietano=zapamietaj_adres
+                            )
+                        adres.save()
+                    else:
+                        messages.info(self.request,"Uzueplnij Wszystkie Pola")
+                    zamowienia.adres=adres
+                    zamowienia.rodzaj_platnosci = rodzaj_platnosci
+                    zamowienia.save()
+                    return redirect('Witryna:dokonaj_platnosci', rodzaj_platnosci)
             else:
 
                 messages.warning(self.request,  "FOrma")
@@ -241,12 +286,11 @@ def DokojnajPlatnosci(request,rodzajplatnosci):
                 return render(request,'zaplata.html',{'zamowienie':zamowienia,'formularz':formularz})
             else:
                 if rodzajplatnosci=="P":
-                     przelew
-                     return render(request, 'DaneDoPrzelewu.html')
+                   return  przelew(request,zamowienia)
+
                 else:
                     if rodzajplatnosci=="OD":
-                        platnosc_przy_odbiorze
-                        return render(request, 'Odbior_osobisty.html')
+                        return platnosc_przy_odbiorze(request)
         except ObjectDoesNotExist:
             messages.error(request,"Koszyk jest pusty")
             return redirect("/")
@@ -288,7 +332,12 @@ def platnosc_przy_odbiorze(request):
     oproznij_koszyk(request)
     return render(request, 'Odbior_osobisty.html')
 
-def przelew(request):
+def przelew(request,zamowienie):
     aktualizuj_status(request)
     oproznij_koszyk(request)
-    return render(request, 'DaneDoPrzelewu.html')
+    konto=KontoBankowe.objects.get()
+    contex = {
+        'Dane' : konto,
+        'Zamowienie':zamowienie
+    }
+    return render(request, 'DaneDoPrzelewu.html',contex)

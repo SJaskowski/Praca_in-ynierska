@@ -4,145 +4,169 @@
 
 {% block content %}
 
-<body class="grey lighten-3">
+    <body class="grey lighten-3">
 
 
-  <!--Main layout-->
-  <main >
-    <div class="container wow fadeIn">
+    <!--Main layout-->
+    <main>
+        <div class="container wow fadeIn">
 
-      <!-- Heading -->
-      <h2 class="my-5 h2 text-center">Formularz Adresowy</h2>
+            <!-- Heading -->
+            <h2 class="my-5 h2 text-center">Formularz Adresowy</h2>
 
-      <!--Grid row-->
-      <div class="row">
-
-        <!--Grid column-->
-        <div class="col-md-8 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-
-
-
-            <!--Card content-->
-            <form method ="POST" class="card-body">
-                 {% csrf_token %}
-              <!--Grid row-->
-              <div class="row">
-
-                <!--Grid column-->
-                <div class="col-md-6 mb-2">
-
-                  <!--firstName-->
-                  <div class="md-form ">
-                    {{ formularz.imie }}
-
-                  </div>
-
-                </div>
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-md-6 mb-2">
-
-                  <!--lastName-->
-                  <div class="md-form">
-                    {{ formularz.nazwisko }}
-                  </div>
-
-                </div>
-                <!--Grid column-->
-
-              </div>
-              <!--Grid row-->
-
+            <!--Grid row-->
             <div class="row">
-              <!--address-->
-              <div class="md-form mb-5 ml-3">
-{#                <input type="text" id="address" class="form-control" placeholder="1234 Main St">#}
-                  {{ formularz.nazwa_ulicy }}
-                <label for="address" class=""></label>
-              </div>
 
-              <!--address-2-->
-              <div class="md-form mb-5 ml-2">
-                {{ formularz.nr_domu }}
-                <label for="address-2" class=""></label>
-              </div>
+                <!--Grid column-->
+                <div class="col-md-8 mb-4">
+
+                    <!--Card-->
+                    <div class="card">
+
+
+                        <!--Card content-->
+                        <form method="POST" class="card-body">
+                            {% csrf_token %}
+
+                        <div class="ukryj_adres">
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-md-6 mb-2">
+
+                                    <!--firstName-->
+                                    <div class="md-form ">
+                                        {{ formularz.imie }}
+
+                                    </div>
+
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-md-6 mb-2">
+
+                                    <!--lastName-->
+                                    <div class="md-form">
+                                        {{ formularz.nazwisko }}
+                                    </div>
+
+                                </div>
+                                <!--Grid column-->
+
+                            </div>
+                            <!--Grid row-->
+
+                            <div class="row">
+                                <!--address-->
+                                <div class="md-form mb-5 ml-3">
+                                    {{ formularz.nazwa_ulicy }}
+                                    <label for="address" class=""></label>
+                                </div>
+
+                                <!--address-2-->
+                                <div class="md-form mb-5 ml-2">
+                                    {{ formularz.nr_domu }}
+                                    <label for="address-2" class=""></label>
+                                </div>
+
+                            </div>
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-lg-4 col-md-12 mb-4">
+
+                                    <label for="country">Kraj</label>
+                                    {{ formularz.kraj }}
+
+
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-lg-4 col-md-6 mb-4">
+
+                                    <label for="Miasto">Miasto</label>
+                                    {{ formularz.miasto }}
+
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-lg-4 col-md-6 mb-4">
+
+                                    <label for="zip">Kod pocztowy</label>
+                                    {{ formularz.kod_pocztowy }}
+                                </div>
+                                <!--Grid column-->
+
+                            </div>
+                            <!--Grid row-->
+
+                            <hr>
+
+
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="zapamietaj_adres" id="zapamietaj_adres">
+                                <label class="custom-control-label" for="zapamietaj_adres">Zapamietaj Adres</label>
+                            </div>
+                        </div>
+                            {% if domyslny_Adres %}
+                                <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" name="uzyj_zapamietanego" id="uzyj_zapamietanego">
+
+                                        <label class="custom-control-label" for="uzyj_zapamietanego">Użyj zapamiętanego Adresu : {{ domyslny_Adres.miasto | upper}} ,{{ domyslny_Adres.nazwa_ulicy| upper }} ,{{ domyslny_Adres.nr_domu }} </label>
+                                 </div>
+                            {% endif %}
+
+
+
+                            <hr>
+
+                            <div class="d-block my-3">
+                                <label>Rodzaj Płatności</label>
+                                {{ formularz.rodzaj_platnosci }}
+                            </div>
+
+                            <hr class="mb-4">
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+
+                        </form>
+
+                    </div>
+                    <!--/.Card-->
+
+                </div>
+                <!--Grid column-->
+
 
             </div>
-
-              <!--Grid row-->
-              <div class="row">
-
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-12 mb-4">
-
-                  <label for="country">Kraj</label>
-                 {{formularz.kraj}}
-
-
-                </div>
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-
-                  <label for="Miasto">Miasto</label>
-                    {{ formularz.miasto }}
-
-                </div>
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-
-                  <label for="zip">Kod pocztowy</label>
-                 {{ formularz.kod_pocztowy }}
-                </div>
-                <!--Grid column-->
-
-              </div>
-              <!--Grid row-->
-
-              <hr>
-
-
-              <div class="custom-control custom-checkbox">
-
-                  {{formularz.zapamietaj_adres}}
-                  <label  for="same-address">Zapamietaj Adres</label>
-              </div>
-
-              <hr>
-
-              <div class="d-block my-3">
-                     <label  >Rodzaj Płatności</label>
-                    {{ formularz.rodzaj_platnosci }}
-              </div>
-
-              <hr class="mb-4">
-              <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-
-            </form>
-
-          </div>
-          <!--/.Card-->
+            <!--Grid column-->
 
         </div>
-        <!--Grid column-->
-
-
+        <!--Grid row-->
 
         </div>
-        <!--Grid column-->
+    </main>
+    <!--Main layout-->
+{% endblock %}
 
-      </div>
-      <!--Grid row-->
+{% block dodatkowe_skrypty %}
+<script>
+var ukryj_adres=$('.ukryj_adres');
 
-    </div>
-  </main>
-  <!--Main layout-->
+var uzyj_domyslnego=document.querySelector("input[name=uzyj_zapamietanego]");
+
+uzyj_domyslnego.addEventListener('change',function () {
+    if(this.checked){
+    ukryj_adres.hide();
+    }
+    else
+    ukryj_adres.show();
+})
+
+</script>
 {% endblock %}

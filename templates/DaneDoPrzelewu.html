@@ -12,7 +12,7 @@
         <div class="container wow fadeIn">
 
             <!-- Heading -->
-            <h2 class="my-5 h2 text-center">Transakcja Powiodła się </h2>
+            <h2 class="my-5 h2 text-center">Wyślij Przelew na poddane Konto</h2>
 
             <!--Grid row-->
             <div class="row">
@@ -22,105 +22,43 @@
 
 
                     <div class="card">
-                        <form action="https://drukiprzelewu.pl/transfer_payment" method="post" accept-charset="utf-8"
-                              name="transfer_payment" role="form">
-                            <div class="row">
-                                <div class="col-md-12 ">
-                                    <label class="">Nazwa odbiorcy</label>
+
+                        <div class="col-md-12 ">
+                                    <label class="">Nazwa Odbiory</label>
                                     <div class="has-feedback">
-                                        <input type="text" class="form-control" name="ricipient" maxlength="108"
-                                               value="" placeholder="">
+                                        <input type="text" class="form-control" name="ricipient" maxlength="30"
+                                               value="{{Dane.nazwao_dbiorcy}} " placeholder="">
                                     </div>
-                                </div>
-                            </div>
+                        </div>
 
                             <div class="row">
                                 <div class="col-md-12 ">
-                                    <label class="">Nr rachunku odbiorcy</label>
+                                    <label class="">Numer Rachunku</label>
                                     <div class="has-feedback">
                                         <input type="text" name="account_ricipient" maxlength="32" value=""
-                                               class="form-control" placeholder="">
+                                               class="form-control" placeholder="{{ Dane.nr_rachunku }}">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 ">
-                                    <label class="">Kwota</label>
+                                    <label class="">Kwota Przelwu</label>
                                     <div class="has-feedback">
                                         <input type="text" name="amount" maxlength="12" value="" class="form-control"
-                                               placeholder="">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label id="type_of_transfer">Typ przekazu</label>
-                                    <input type="radio" name="payment_remittance" id="radio_payment" value="1"
-                                           onclick="checkradio('transfer_payment', 'payment_remittance', 'account_payer', 'input_account_payer')"
-                                           class="" checked="checked">
-                                    <label class="radio-inline" for="radio_payment">wpłata</label>
-
-                                    <input type="radio" name="payment_remittance" id="radio_remittance" value="2"
-                                           onclick="checkradio('transfer_payment', 'payment_remittance', 'account_payer', 'input_account_payer')"
-                                           class="">
-                                    <label class="radio-inline" for="radio_remittance">przelew</label>
-                                </div>
-                            </div>
-
-                            <div class="row" id="account_payer" style="display: none;">
-                                <div class="col-md-12 ">
-                                    <label class="">Nr rachunku zleceniodawcy (przelew)</label>
-                                    <div class="has-feedback">
-                                        <input type="text" name="account_payer" id="input_account_payer" maxlength="32"
-                                               value="" class="form-control" placeholder="" disabled="">
+                                               placeholder="{{Zamowienie.cena_koncowa_zamowienia}}">
                                     </div>
                                 </div>
                             </div>
-                            <script type="text/javascript">window.onload = checkradio('transfer_payment', 'payment_remittance', 'account_payer', 'input_account_payer')</script>
-
-                            <div class="row">
-                                <div class="col-md-12 ">
-                                    <label class="">Nazwa zleceniodawcy</label>
-                                    <div class="has-feedback">
-                                        <input type="text" name="payer" maxlength="108" value="" class="form-control"
-                                               placeholder="">
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="row">
                                 <div class="col-md-12 ">
                                     <label class="">Tytuł przelewu</label>
                                     <div class="has-feedback">
                                         <input type="text" name="transfer_title" maxlength="108" value=""
-                                               class="form-control" placeholder="">
+                                               class="form-control" placeholder="{{ Zamowienie.id_zamowienia }}">
                                     </div>
                                 </div>
                             </div>
-
-
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <input type="submit" class="btn btn-primary btn-lg btn-block btns-generate-pdf"
-                                           name="submit" value="Generuj druk prosty">
-                                    <div class="h-line"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <input type="submit" class="btn btn-primary btn-lg btn-block btns-generate-pdf"
-                                           name="submit" value="Generuj druk 2x">
-                                    <div class="h-line"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <input type="submit" class="btn btn-primary btn-lg btn-block btns-save"
-                                           name="submit" value="Zapisz do pliku">
-                                    <div class="h-line"></div>
-                                </div>
-                            </div>
-
                         </form>
                     </div>
 

@@ -41,7 +41,7 @@ def zmien_kategorie(request,kategoria):
     return redirect("Witryna:Main")
 
 def podstawowa_kategorie(request,kategoria):
-    categoria = get_object_or_404(Kategoria, nazwa=kategoria)
+    categoria=kategoria
     OknoGlowne.categoria=categoria
     return redirect("Witryna:Main")
 

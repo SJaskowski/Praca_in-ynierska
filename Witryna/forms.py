@@ -20,3 +20,6 @@ class FormularzDanychAdresowych(forms.Form):
     zapamietaj_adres = forms.BooleanField(widget=forms.CheckboxInput(),required=False)
     rodzaj_platnosci=forms.ChoiceField(choices=Wybor_Platonosci,widget=forms.RadioSelect)
 
+class FormularzFiltraPrzedmiotów(forms.Form):
+    szukany_przedmiot = forms.CharField(widget=forms.TextInput(attrs={'placeholder':"Szukaj"}))
+

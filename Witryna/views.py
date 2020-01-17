@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import FormularzDanychAdresowych
+from .forms import FormularzDanychAdresowych,FormularzFiltraPrzedmiotów
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
 # from .rekomendacja import Rekomendacja
@@ -23,17 +23,27 @@ class OknoGlowne(ListView):
     paginate_by = 5
     template_name = "Strona_glowna.html"
     categoria = 3
+    filtr_przedmiotow=FormularzFiltraPrzedmiotów
+    filtr_przedmiotow.szukany_przedmiot=''
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['kategoria'] = Kategoria.objects.all(**kwargs)
+        context['filtr']=self.filtr_przedmiotow
         return context
 
     def get_queryset(self, **kwargs):
+       if self.filtr_przedmiotow.szukany_przedmiot:
         qs = super().get_queryset()
         if self.categoria == 3:
             return qs.all()
         else:
             return Produkt.objects.filter(kategoria=self.categoria)
+       else:
+           qs = super().get_queryset()
+           if self.categoria == 3:
+               return qs.filter(Produkt.nazwa==self.filtr_przedmiotow.szukany_przedmiot)
+           else:
+               return Produkt.objects.filter(kategoria=self.categoria,nazwa=self.filtr_przedmiotow.szukany_przedmiot)
 
 def zmien_kategorie(request,kategoria):
     categoria=get_object_or_404(Kategoria,nazwa=kategoria)

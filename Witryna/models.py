@@ -22,6 +22,10 @@ class Kategoria(models.Model):
                 'kategoria': 3
             })
 
+    def __str__(self):
+        return self.nazwa
+
+
 class Produkt(models.Model):
     nazwa = models.CharField(max_length=100)
     id    = models.CharField(max_length=10,primary_key=True,)
@@ -63,6 +67,9 @@ class KontoBankowe(models.Model):
     nazwao_dbiorcy = models.CharField(max_length=100)
     nr_rachunku = models.CharField(max_length=100)
 
+    def __str__(self):
+        return "Konto Bankowe"
+
 
 
 class Adres(models.Model):
@@ -76,7 +83,8 @@ class Adres(models.Model):
     miasto=models.CharField(max_length=100)
     zapamietano=models.BooleanField(default=False)
 
-
+    def __str__(self):
+        return self.miasto+ ", "+ self.nazwa_ulicy +", "+self.nr_domu
 
 
 class ZamowionyPrzedmiot(models.Model):

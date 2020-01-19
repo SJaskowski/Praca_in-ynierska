@@ -21,23 +21,29 @@ class   Rekomendacja(object):
                                        1,
                                        with_id)
 
-    def sugeruj_produkty(self,produkty,max_wynikow=6):
+    def sugeruj_produkty(self,produkt,max_wynikow=6):
 
         # id_produktow= [p.id for p in produkty]
-        if len(produkty) == 1:
-            rekomendacja = polaczenie.zrange(self.get_klucz_produktu(self,id_produktow[0]),0,-1,desc=True)[:max_wynikow]
+        # id_produktow[0]
+        # if len(produkty) == 1:
+        rekomendacja = polaczenie.zrange(self.get_klucz_produktu(produkt),0,-1,desc=True)[:max_wynikow]
 
-        else:
-            flat_ids = ''.join([str(id) for id in id_produktow])
-            klucz_tymczasowy = 'tmp_{}'.format(flat_ids)
-            klucze = [self.get_klucz_produktu(id) for id in id_produktow]
-            polaczenie.zunionstore(klucz_tymczasowy,klucze)
-            polaczenie.zrem(klucz_tymczasowy, *id_produktow)
-            rekomendacja= polaczenie.zrange(klucz_tymczasowy,0,-1,desc=True)[:max_wynikow]
-            polaczenie.delete(klucz_tymczasowy)
-        rekomendowane_id_produktow = [int(id) for id in rekomendacja]
-        rekomendowane_produkty  =  list(Produkt.objects.filter(id=rekomendowane_id_produktow))
-        rekomendowane_produkty.sort(key=lambda x: rekomendowane_id_produktow.index(x.id))
+        # else:
+        #     flat_ids = ''.join([str(id) for id in id_produktow])
+        #     klucz_tymczasowy = 'tmp_{}'.format(flat_ids)
+        #     klucze = [self.get_klucz_produktu(id) for id in id_produktow]
+        #     polaczenie.zunionstore(klucz_tymczasowy,klucze)
+        #     polaczenie.zrem(klucz_tymczasowy, *id_produktow)
+        #     rekomendacja= polaczenie.zrange(klucz_tymczasowy,0,-1,desc=True)[:max_wynikow]
+        #     polaczenie.delete(klucz_tymczasowy)
+        rekomendowane_id_produktow = [id for id in rekomendacja]
+        produkty=  Produkt.objects.all()
+        rekomendowane_produkty= []
+        for object in rekomendowane_id_produktow:
+            tmp=str(object)
+            tmp.strip("'")
+            print(tmp[2:len(tmp)-1])
+            rekomendowane_produkty+=produkty.filter(id=tmp[2:len(tmp)-1])
         return rekomendowane_produkty
 
     def usun_rekoemndacje(self):

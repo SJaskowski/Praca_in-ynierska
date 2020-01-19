@@ -20,7 +20,7 @@ from .rekomendacja import Rekomendacja
 
 class OknoGlowne(ListView):
     model = Produkt
-    paginate_by = 5
+    paginate_by = 30
     template_name = "Strona_glowna.html"
     categoria = 3
     filtr_przedmiotow=FormularzFiltraPrzedmiotów

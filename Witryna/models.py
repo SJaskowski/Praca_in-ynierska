@@ -32,9 +32,9 @@ class Kategoria(models.Model):
 
 class Produkt(models.Model):
     class Meta:
-        verbose_name_plural = "Produkty"
+     verbose_name_plural = "Produkty"
     nazwa = models.CharField(max_length=100)
-    id    = models.CharField(max_length=10,primary_key=True,)
+    id = models.CharField(max_length=10,primary_key=True,)
     opis = models.CharField(max_length=1000,blank=True)
     spefycfikacja = models.CharField(max_length=1000, blank=True)
     zdjecie = models.ImageField(blank=True)

@@ -59,7 +59,11 @@
 
               <!--Card image-->
               <div class="view overlay">
-                <img src ="{{ Produkt.zdjecie.url|resize:"130x160,C"}}" class="card-img-top">
+                {%if Produkt.zdjecie %}
+                    <img src ="{{ Produkt.zdjecie.url|resize:"130x160,C"}}" class="card-img-top">
+                {% else %}
+                    <img src="{{ "media/NoFile.png" |resize:"130x160,C"  }}" class="card-img-top">
+                {% endif %}
                 <a href="{{ Produkt.get_absolute_url }}">
                   <div class="mask rgba-white-slight"></div>
                 </a>

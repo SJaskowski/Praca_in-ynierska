@@ -10,6 +10,8 @@ from string import __all__
 
 
 class Kategoria(models.Model):
+    class Meta:
+        verbose_name_plural = "Kategorie"
     nazwa=models.CharField(max_length=100)
     id=models.CharField(max_length=3,primary_key=True)
 
@@ -26,7 +28,11 @@ class Kategoria(models.Model):
         return self.nazwa
 
 
+
+
 class Produkt(models.Model):
+    class Meta:
+        verbose_name_plural = "Produkty"
     nazwa = models.CharField(max_length=100)
     id    = models.CharField(max_length=10,primary_key=True,)
     opis = models.CharField(max_length=1000,blank=True)
@@ -57,13 +63,20 @@ class Produkt(models.Model):
         })
 
 
-class Uzytkownik(AbstractUser):
-  data_urodzenia = models.DateField(null=True, blank=True)
 
-  def __str__(self):
+
+class Uzytkownik(AbstractUser):
+    class Meta:
+        verbose_name_plural = "Użytkownicy"
+    data_urodzenia = models.DateField(null=True, blank=True)
+
+    def __str__(self):
       return self.username
 
 class KontoBankowe(models.Model):
+    class Meta:
+        verbose_name_plural = "Konta Bankowe"
+
     nazwao_dbiorcy = models.CharField(max_length=100)
     nr_rachunku = models.CharField(max_length=100)
 
@@ -72,7 +85,11 @@ class KontoBankowe(models.Model):
 
 
 
+
+
 class Adres(models.Model):
+    class Meta:
+        verbose_name_plural = "Adresy"
     uzytkownik=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     imie=models.CharField(max_length=100)
     nazwisko=models.CharField(max_length=100)
@@ -88,6 +105,8 @@ class Adres(models.Model):
 
 
 class ZamowionyPrzedmiot(models.Model):
+    class Meta:
+        verbose_name_plural = "Zamowione Produkty"
     uzytkownik=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     przedmiot=models.ForeignKey(Produkt,on_delete=models.CASCADE)
     ilosc=models.IntegerField(default=1)
@@ -99,7 +118,7 @@ class ZamowionyPrzedmiot(models.Model):
         else:
          return self.ilosc * self.przedmiot.cena
     def __str__(self):
-        return (self.ilosc.__str__()+" razy "+self.przedmiot.nazwa)
+        return (self.ilosc.__str__()+" "+self.przedmiot.nazwa)
 
     def oszczedzonakwota(self):
         if self.przedmiot.promocyjnacena:
@@ -113,6 +132,8 @@ class ZamowionyPrzedmiot(models.Model):
 
 
 class Zamowienie(models.Model):
+    class Meta:
+        verbose_name_plural = "Zamówienia"
     uzytkownik = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     data_zamowienia = models.DateTimeField()
 

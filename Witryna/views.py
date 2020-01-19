@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .forms import FormularzDanychAdresowych,FormularzFiltraPrzedmiotów
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
-# from .rekomendacja import Rekomendacja
+from .rekomendacja import Rekomendacja
 
 
 
@@ -58,13 +58,15 @@ def podstawowa_kategorie(request,kategoria):
 
 class DetaleProduktu(DetailView):
         model = Produkt
-        # rekomencdacja=Rekomendacja()
-        # rekomendowane_produkty=Rekomendacja.sugeruj_produkty(Rekomendacja,[Produkt],4)
+        rekomendacja=Rekomendacja()
+
         template_name = "Produkt_detale.html"
 
         def get_context_data(self, **kwargs):
             context = super().get_context_data()
-            # context['rekomendowane_produkty'] = self.rekomendowane_produkty
+            lista_przedmiotu=self.kwargs.get('pk')
+            rekomendowane_id_produktow=self.rekomendacja.sugeruj_produkty(lista_przedmiotu, 4)
+            context['rekomendowane_produkty'] = rekomendowane_id_produktow
             return context
 
 
@@ -266,9 +268,16 @@ def usun_pojedynczy_przedmiot_z_koszyka(request, pk):
     return redirect("Witryna:podsumowanie_zamowienia")
 
 def DokojnajPlatnosci(request,rodzajplatnosci):
+
         try:
             zamowienia = Zamowienie.objects.get(uzytkownik=request.user,
                                                    zamowiono=False)
+            zamowione_przedmioty=zamowienia.przedmioty.all()
+
+
+            r=Rekomendacja()
+            r.produkty_zakupione(zamowione_przedmioty.values_list('przedmiot_id',flat=True))
+
             if(rodzajplatnosci=="PP"):
                 id_zamowienia=zamowienia.get_id()
                 paypal_dict = {
